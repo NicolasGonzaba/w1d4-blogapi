@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "dgSpecHash": "W3RLoqF5qPg=",
+  "success": true,
+  "projectFilePath": "/Users/nicolasgonzaba/Documents/CodeStack/Level 3/week 1/w1d4-blogapi/w1d4-blogapi.csproj",
+  "expectedPackageFiles": [
+    "/Users/nicolasgonzaba/.nuget/packages/microsoft.aspnetcore.openapi/9.0.9/microsoft.aspnetcore.openapi.9.0.9.nupkg.sha512",
+    "/Users/nicolasgonzaba/.nuget/packages/microsoft.openapi/1.6.17/microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1900",
+      "level": "Warning",
+      "message": "Error occurred while getting package vulnerability data: Access to the path '/Users/nicolasgonzaba/.local/share/NuGet/http-cache/670c1461c29885f9aa22c281d8b7da90845b38e4$ps:_api.nuget.org_v3_index.json/vuln_index.dat-new' is denied.",
+      "projectPath": "/Users/nicolasgonzaba/Documents/CodeStack/Level 3/week 1/w1d4-blogapi/w1d4-blogapi.csproj",
+      "warningLevel": 1,
+      "filePath": "/Users/nicolasgonzaba/Documents/CodeStack/Level 3/week 1/w1d4-blogapi/w1d4-blogapi.csproj",
+      "targetGraphs": []
+    }
+  ]
+}
