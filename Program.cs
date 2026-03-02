@@ -1,14 +1,18 @@
+using Microsoft.EntityFrameworkCore;
+using w1d4_blogapi.Services;
+using w1d4_blogapi.Services.Context;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddScoped<BlogItemServiece>();
+builder.Services.AddScoped<BlogItemService>();
 builder.Services.AddScoped<PasswordService>();
 builder.Services.AddScoped<UserService>();
 
 var connectionString= builder.Configuration.GetConnectionString("myBlogString2");
-builder.Services.AddDBContext<DataContext>(FileOptions=>FileOptions.UseSqlServer(connectionString));
+builder.Services.AddDbContext<Context>(FileOptions=>FileOptions.UseSqlServer(connectionString));
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
