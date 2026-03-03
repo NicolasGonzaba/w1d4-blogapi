@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("w1d4-blogapi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9e61cec198d6bb26067fa330253824aa479bf2ab")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ebd9a5f3c2c24f6fd5de9e96ba4da8ab9f6cef20")]
 [assembly: System.Reflection.AssemblyProductAttribute("w1d4-blogapi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("w1d4-blogapi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

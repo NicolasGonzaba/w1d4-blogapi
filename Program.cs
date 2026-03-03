@@ -12,7 +12,7 @@ builder.Services.AddScoped<PasswordService>();
 builder.Services.AddScoped<UserService>();
 
 var connectionString= builder.Configuration.GetConnectionString("myBlogString2");
-builder.Services.AddDbContext<Context>(FileOptions=>FileOptions.UseSqlServer(connectionString));
+builder.Services.AddDbContext<DataContext>(FileOptions=>FileOptions.UseSqlServer(connectionString));
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
