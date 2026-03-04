@@ -7,6 +7,7 @@ namespace w1d4_blogapi.Models.DTO
 {
     public class PasswordDTO
     {
-        
+        public string? Salt { get; set; }
+        public string? Hash { get; set; }
     }
 }

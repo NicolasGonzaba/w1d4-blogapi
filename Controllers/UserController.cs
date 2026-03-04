@@ -21,9 +21,10 @@ public class UserController : ControllerBase
 
     // Function to add our user type of CreateAccountDTO call UserTodadd this will return bool once out user is added
     // add user
+    [HttpPost("AddUser")]
     public bool AddUser(CreateAccountDTO UserToAdd)
     {
-        throw new NotImplementedException();
+        return _data.AddUser(UserToAdd);
 
     }
 }
