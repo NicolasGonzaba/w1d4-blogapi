@@ -127,6 +127,10 @@ bool IsDeleted
     string Salt
     string Hash
 
+### UserID DTO
+    int UserID
+    string PublisherName
+
 ```
 
 ### Services
