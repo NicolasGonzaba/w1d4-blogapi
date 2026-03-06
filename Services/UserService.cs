@@ -35,25 +35,25 @@ public class UserService : ControllerBase
 
     public bool AddUser(CreateAccountDTO userToAdd)
     {
-        bool result=false;
-        
-        if (userToAdd.Username!= null&& !DoesUserExist(userToAdd.Username))
+        bool result = false;
+
+        if (userToAdd.Username != null && !DoesUserExist(userToAdd.Username))
         {
-            UserModel newUser=new();
+            UserModel newUser = new();
 
-            var HashedPassword=HashPassword(userToAdd.Password);
+            var HashedPassword = HashPassword(userToAdd.Password);
 
-            newUser.Id=userToAdd.Id;
-            newUser.Username=userToAdd.Username;
+            newUser.Id = userToAdd.Id;
+            newUser.Username = userToAdd.Username;
 
-            newUser.Salt=HashedPassword.Salt;
-            newUser.Hash=HashedPassword.Hash;
-            
+            newUser.Salt = HashedPassword.Salt;
+            newUser.Hash = HashedPassword.Hash;
+
             _context.Add(newUser);
 
-            return _context.SaveChanges() !=0;
+            return _context.SaveChanges() != 0;
 
-     
+
         }
         return result;
 
@@ -67,25 +67,25 @@ public class UserService : ControllerBase
         // Save our Changes
         // return a bool to return true or false
     }
-    
+
     // Function that will help us Hash our password
     public PasswordDTO HashPassword(string? password)
     {
-        PasswordDTO newHashedPassword= new();
+        PasswordDTO newHashedPassword = new();
 
-        byte[] SaltBytes=new byte[64];
+        byte[] SaltBytes = new byte[64];
 
         var provider = RandomNumberGenerator.Create();
         provider.GetNonZeroBytes(SaltBytes);
 
-        var Salt=Convert.ToBase64String(SaltBytes);
+        var Salt = Convert.ToBase64String(SaltBytes);
 
         var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password ?? "", SaltBytes, 10000, HashAlgorithmName.SHA256);
 
-        var Hash= Convert.ToBase64String(rfc2898DeriveBytes.GetBytes(256));
+        var Hash = Convert.ToBase64String(rfc2898DeriveBytes.GetBytes(256));
 
-        newHashedPassword.Salt=Salt;
-        newHashedPassword.Hash=Hash;
+        newHashedPassword.Salt = Salt;
+        newHashedPassword.Hash = Hash;
 
         return newHashedPassword;
     }
@@ -96,15 +96,15 @@ public class UserService : ControllerBase
         if (StoredSalt == null)
         {
             return false;
-        } 
+        }
 
-        var SaltBytes= Convert.FromBase64String(StoredSalt);
+        var SaltBytes = Convert.FromBase64String(StoredSalt);
 
-        var rfc2898DeriveBytes= new Rfc2898DeriveBytes(Password ?? "",SaltBytes, 10000, HashAlgorithmName.SHA256);
-        
-        var newHash=Convert.ToBase64String(rfc2898DeriveBytes.GetBytes(256));
+        var rfc2898DeriveBytes = new Rfc2898DeriveBytes(Password ?? "", SaltBytes, 10000, HashAlgorithmName.SHA256);
 
-        return newHash==StoredHash;
+        var newHash = Convert.ToBase64String(rfc2898DeriveBytes.GetBytes(256));
+
+        return newHash == StoredHash;
     }
 
     public IEnumerable<UserModel> GetAllUsers()
@@ -112,34 +112,45 @@ public class UserService : ControllerBase
         return _context.UserInfo;
     }
 
+    // GetAllUsersDataByUsername
+    public UserModel GetAllUserDataByUsername(string username)
+    {
+        return _context.UserInfo.FirstOrDefault(user => user.Username == username);
+    }
+
     public IActionResult Login(LoginDTO user)
     {
-        IActionResult result= Unauthorized();
+        IActionResult result = Unauthorized();
         // If the user exists
         if (DoesUserExist(user.Username))
         {
-            
-            // Create a secret key to sign the JTW Token
-            // This should be stored securley (not hard coded in production)
-            var secretKey= new SymmetricSecurityKey(Encoding.UTF8.GetBytes("supersupersuperdupersecurekey@34444456789"));
-            // Create signing credentials using the secret key and HMACSHA256 algorithm
-            var signingCredentials=new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256); // Ensures the token can't be tampered with
+            UserModel foundUser = GetAllUserDataByUsername(user.Username);
+            if (verifyUserPassword(user.Password, foundUser.Hash, foundUser.Salt))
+            {
 
-            // Build the JWT with metadata
 
-            var tokeOptions=new JwtSecurityToken(
-                    issuer: "https://localhost:5001",
-                    audience: "https://localhost:5001",
-                    claims: new List<Claim>(),
-                    expires: DateTime.Now.AddMinutes(5),
-                    signingCredentials: signingCredentials
-            );
+                // Create a secret key to sign the JTW Token
+                // This should be stored securley (not hard coded in production)
+                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("supersupersuperdupersecurekey@34444456789"));
+                // Create signing credentials using the secret key and HMACSHA256 algorithm
+                var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256); // Ensures the token can't be tampered with
 
-            // Convert the token object into tsring that can be sent to client
-            var tokenString= new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+                // Build the JWT with metadata
 
-            // return the token as a JSON to the client
-            result=Ok(new{Token=tokenString});
+                var tokeOptions = new JwtSecurityToken(
+                        issuer: "https://localhost:5001",
+                        audience: "https://localhost:5001",
+                        claims: new List<Claim>(),
+                        expires: DateTime.Now.AddMinutes(5),
+                        signingCredentials: signingCredentials
+                );
+
+                // Convert the token object into tsring that can be sent to client
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+
+                // return the token as a JSON to the client
+                result = Ok(new { Token = tokenString });
+            }
         }
         // Return either the token (If user exists) or unauthorized (If not)
         return result;
@@ -148,5 +159,43 @@ public class UserService : ControllerBase
     internal UserIdDTO GetUserIdDTOByUsername(string username)
     {
         throw new NotImplementedException();
+    }
+    // helper function to help us find a user
+    public UserModel GetUserByUsername(string username)
+    {
+        return _context.UserInfo.SingleOrDefault(user => user.Username == username);
+    }
+
+    public bool DeleteUser(string userToDelete)
+    {
+        UserModel foundUser = GetUserByUsername(userToDelete);
+        bool result = false;
+
+        if (foundUser != null)
+        {
+            foundUser.Username = userToDelete;
+            _context.Remove(foundUser);
+
+            result = _context.SaveChanges() != 0;
+        }
+        return result;
+    }
+
+    public UserModel GetUserById(int id)
+    {
+        return _context.UserInfo.SingleOrDefault(user => user.Id == id);
+    }
+
+    public bool UpdateUser(int id, string username)
+    {
+        UserModel foundUser = GetUserById(id);
+        bool result = false;
+        if (foundUser != null)
+        {
+            foundUser.Username = username;
+            _context.Update(foundUser);
+            result = _context.SaveChanges() != 0;
+        }
+        return result;
     }
 }
